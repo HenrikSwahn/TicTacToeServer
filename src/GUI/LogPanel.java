@@ -31,5 +31,4 @@ public class LogPanel extends JPanel {
         add(jsp);
 
     }
-
 }

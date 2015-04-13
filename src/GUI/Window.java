@@ -18,7 +18,12 @@ public class Window extends JFrame {
         log = new LogPanel();
         setName(windowName);
         setUpLayout();
-        log.append(windowName);
+
+    }
+
+    public void appendToLog(String msg) {
+
+        log.append(msg);
 
     }
 
@@ -33,7 +38,7 @@ public class Window extends JFrame {
 
     }
 
-    private  void setUpPanels() {
+    private void setUpPanels() {
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
