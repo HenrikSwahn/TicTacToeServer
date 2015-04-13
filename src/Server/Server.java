@@ -1,8 +1,10 @@
 package Server;
 
 import GUI.Window;
+import com.javafx.tools.doclets.internal.toolkit.util.DocFinder;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -46,16 +48,44 @@ public class Server implements Runnable {
         if(win != null) {
 
             startServer();
-            
+
             try{
 
                 win.appendToLog("Now listening on " + PORT);
-                client = server.accept();
-                OutputStream out = client.getOutputStream();
-                out.write(("Hello From Server").getBytes());
-                out.flush();
-                out.close();
-                client.close();
+
+                while(true) {
+
+                    client = server.accept();
+                    OutputStream out = client.getOutputStream();
+                    InputStream in = client.getInputStream();
+                    out.write(("Hello From Server").getBytes());
+                    out.flush();
+
+                    byte[] incBytes;
+
+                    while(true) {
+
+                        incBytes = new byte[4096];
+
+                        if(in.read(incBytes) != -1) {
+
+                            win.appendToLog(new String(incBytes, "UTF-8"));
+                            out.write(incBytes);
+                            out.flush();
+
+                        }else {
+
+                            win.appendToLog("Client disconnected");
+                            break;
+
+                        }
+
+                    }
+
+                    out.close();
+                    client.close();
+
+                }
 
             }catch(IOException e) {
 

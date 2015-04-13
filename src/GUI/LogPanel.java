@@ -13,6 +13,7 @@ public class LogPanel extends JPanel {
     public LogPanel() {
 
         area = new JTextArea();
+        area.setEditable(false);
         setUpLayout();
 
     }
