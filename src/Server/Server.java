@@ -4,6 +4,7 @@ import GUI.Window;
 
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -51,6 +52,12 @@ public class Server implements Runnable {
         }
     }
 
+    private boolean checkAmountOfThreads() {
+
+        return currentThreads < 2;
+
+    }
+
     public void setPort(int PORT) {
 
         this.PORT = PORT;
@@ -76,12 +83,27 @@ public class Server implements Runnable {
                 while(true) {
 
                     client = server.accept();
-                    Worker w = new Worker(client, this);
-                    workers.add(w);
-                    executors.execute(w);
-                    incThreadCounter();
-                    win.appendToLog("A new WorkerThread has been started id: " + w.getId());
-                    win.appendToLog("Nr of active threads: " + getNrOfThreads());
+
+                    if(checkAmountOfThreads()) {
+
+                        Worker w = new Worker(client, this);
+                        workers.add(w);
+                        executors.execute(w);
+                        incThreadCounter();
+                        win.appendToLog("A new WorkerThread has been started id: " + w.getId());
+                        win.appendToLog("Nr of active threads: " + getNrOfThreads());
+
+                    }else{
+
+                        OutputStream out = client.getOutputStream();
+                        out.write(("Server is full atm, try again later....").getBytes());
+                        out.flush();
+                        out.write(("disconnection....").getBytes());
+                        out.flush();
+                        out.close();
+                        client.close();
+
+                    }
 
                 }
 
