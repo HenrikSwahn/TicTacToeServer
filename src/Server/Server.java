@@ -133,7 +133,7 @@ public class Server implements Runnable {
 
     }
 
-    public void decThreadCounter() {
+    public synchronized void decThreadCounter() {
 
         if(currentThreads > 0) {
             currentThreads--;
@@ -141,7 +141,7 @@ public class Server implements Runnable {
 
     }
 
-    public int getNrOfThreads() {
+    public synchronized int getNrOfThreads() {
 
         return currentThreads;
 
