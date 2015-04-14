@@ -18,10 +18,14 @@ public class LogPanel extends JPanel {
 
     }
 
-    public void append(String msg) {
+    public void append(Object obj) {
 
-        String toAppend = ">" + msg + "\n";
-        area.append(toAppend);
+        if(obj instanceof String) {
+
+            obj = ">" + obj + "\n";
+            area.append((String)obj);
+
+        }
 
     }
 

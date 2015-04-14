@@ -21,9 +21,9 @@ public class Window extends JFrame {
 
     }
 
-    public void appendToLog(String msg) {
+    public void appendToLog(Object obj) {
 
-        log.append(msg);
+        log.append(obj);
 
     }
 

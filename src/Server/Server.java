@@ -1,13 +1,15 @@
 package Server;
 
 import GUI.Window;
-import com.javafx.tools.doclets.internal.toolkit.util.DocFinder;
+
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by henrik on 13/04/15.
@@ -19,6 +21,9 @@ public class Server implements Runnable {
     private Socket client;
     private int PORT;
     private Window win;
+    private ExecutorService executors = Executors.newFixedThreadPool(2);
+    private List workers;
+    private int currentThreads;
 
     private Server() {}
 
@@ -29,6 +34,21 @@ public class Server implements Runnable {
 
         return srv;
 
+    }
+
+    private void startServer() {
+
+        try {
+
+            currentThreads = 0;
+            workers = new ArrayList<Worker>(2);
+            server = new ServerSocket(PORT);
+
+        }catch(IOException e) {
+
+            System.err.print(e);
+
+        }
     }
 
     public void setPort(int PORT) {
@@ -56,34 +76,12 @@ public class Server implements Runnable {
                 while(true) {
 
                     client = server.accept();
-                    OutputStream out = client.getOutputStream();
-                    InputStream in = client.getInputStream();
-                    out.write(("Hello From Server").getBytes());
-                    out.flush();
-
-                    byte[] incBytes;
-
-                    while(true) {
-
-                        incBytes = new byte[4096];
-
-                        if(in.read(incBytes) != -1) {
-
-                            win.appendToLog(new String(incBytes, "UTF-8"));
-                            out.write(incBytes);
-                            out.flush();
-
-                        }else {
-
-                            win.appendToLog("Client disconnected");
-                            break;
-
-                        }
-
-                    }
-
-                    out.close();
-                    client.close();
+                    Worker w = new Worker(client, this);
+                    workers.add(w);
+                    executors.execute(w);
+                    incThreadCounter();
+                    win.appendToLog("A new WorkerThread has been started id: " + w.getId());
+                    win.appendToLog("Nr of active threads: " + getNrOfThreads());
 
                 }
 
@@ -95,16 +93,35 @@ public class Server implements Runnable {
         }
     }
 
-    private void startServer() {
+    public synchronized  void appendToLog(Object obj) {
 
-        try {
+        win.appendToLog(obj);
 
-            server = new ServerSocket(PORT);
+    }
 
-        }catch(IOException e) {
+    public synchronized void incMessage(Object obj) {
 
-            System.err.print(e);
+        win.appendToLog(obj);
 
+    }
+
+    public void incThreadCounter() {
+
+        currentThreads++;
+
+    }
+
+    public void decThreadCounter() {
+
+        if(currentThreads > 0) {
+            currentThreads--;
         }
+
+    }
+
+    public int getNrOfThreads() {
+
+        return currentThreads;
+
     }
 }
