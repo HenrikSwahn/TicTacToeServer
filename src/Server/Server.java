@@ -23,7 +23,7 @@ public class Server implements Runnable {
     private int PORT;
     private Window win;
     private ExecutorService executors = Executors.newFixedThreadPool(2);
-    private List workers;
+    private List<Worker> workers;
     private int currentThreads;
 
     private Server() {}
@@ -124,6 +124,11 @@ public class Server implements Runnable {
     public synchronized void incMessage(Object obj) {
 
         win.appendToLog(obj);
+        for(Worker w:workers) {
+
+            w.send(obj);
+
+        }
 
     }
 
@@ -135,9 +140,10 @@ public class Server implements Runnable {
 
     public synchronized void decThreadCounter() {
 
-        if(currentThreads > 0) {
+        if(currentThreads > 0)
             currentThreads--;
-        }
+
+
 
     }
 
