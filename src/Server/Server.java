@@ -17,12 +17,13 @@ import java.util.concurrent.Executors;
  */
 public class Server implements Runnable {
 
+    private final int nrThreads = 5;
     private static Server srv = null;
     private ServerSocket server;
     private Socket client;
     private int PORT;
     private Window win;
-    private ExecutorService executors = Executors.newFixedThreadPool(2);
+    private ExecutorService executors = Executors.newFixedThreadPool(nrThreads);
     private List<Worker> workers;
     private int currentThreads;
 
@@ -42,7 +43,7 @@ public class Server implements Runnable {
         try {
 
             currentThreads = 0;
-            workers = new ArrayList<Worker>(2);
+            workers = new ArrayList<Worker>(nrThreads);
             server = new ServerSocket(PORT);
 
         }catch(IOException e) {
@@ -54,7 +55,7 @@ public class Server implements Runnable {
 
     private boolean checkAmountOfThreads() {
 
-        return currentThreads < 2;
+        return currentThreads < nrThreads;
 
     }
 

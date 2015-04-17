@@ -1,6 +1,10 @@
 package Server;
 
 
+import Model.User;
+import com.sun.deploy.util.ArrayUtil;
+import com.sun.tools.javac.util.ArrayUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,12 +20,13 @@ public class Worker extends Thread implements Runnable {
     private OutputStream out;
     private InputStream in;
     private byte[] inBytes;
+    private User usr;
 
     public Worker(Socket client, Server srv) {
 
         this.client = client;
         this.srv = srv;
-
+        usr = new User(getId());
 
     }
 
@@ -40,8 +45,6 @@ public class Worker extends Thread implements Runnable {
     }
 
     public void run() {
-
-
 
         setUpStreams();
 
@@ -67,8 +70,6 @@ public class Worker extends Thread implements Runnable {
                 System.err.print(e);
 
             }
-
-
         }
     }
 
@@ -78,7 +79,10 @@ public class Worker extends Thread implements Runnable {
 
             try {
 
-                out.write(((String) obj).getBytes());
+                out.write(
+                        arrayConcat(usr.toString().getBytes(),
+                                ((String) obj).getBytes())
+                );
                 out.flush();
 
             }catch(IOException e) {
@@ -87,5 +91,21 @@ public class Worker extends Thread implements Runnable {
 
             }
         }
+    }
+
+    private byte[] arrayConcat(byte[] a, byte[] b) {
+
+        int aLength = a.length;
+        int bLength = b.length;
+        byte[] arrow = (" > ").getBytes();
+        int arrLength = arrow.length;
+        byte[] c = new byte[aLength+bLength+arrLength];
+
+        System.arraycopy(a,0,c,0,aLength);
+        System.arraycopy(arrow,0,c,aLength, arrLength);
+        System.arraycopy(b,0,c,(aLength + arrLength),bLength);
+
+        return c;
+
     }
 }
