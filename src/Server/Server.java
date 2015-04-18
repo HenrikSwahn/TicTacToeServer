@@ -27,7 +27,6 @@ public class Server implements Runnable {
     private ExecutorService executors = Executors.newFixedThreadPool(nrThreads);
     private List<Worker> workers;
     private int currentThreads;
-    private dbHandler databaseHandler;
 
     private Server() {}
 
@@ -45,8 +44,6 @@ public class Server implements Runnable {
         try {
 
             currentThreads = 0;
-            databaseHandler = dbHandler.getInstance();
-            databaseHandler.connect();
             workers = new ArrayList<Worker>(nrThreads);
             server = new ServerSocket(PORT);
 

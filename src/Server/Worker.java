@@ -2,10 +2,9 @@ package Server;
 
 
 import Model.User;
+import Model.dbHandler;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
 /**
@@ -13,18 +12,22 @@ import java.net.Socket;
  */
 public class Worker extends Thread implements Runnable {
 
+    private enum stages{
+        LOGGIN_IN, LOGGED_IN;
+    }
+
     private Socket client;
     private Server srv;
     private OutputStream out;
     private InputStream in;
     private byte[] inBytes;
-    private User usr;
+    private stages stage = stages.LOGGIN_IN;
+    private dbHandler database;
 
     public Worker(Socket client, Server srv) {
 
         this.client = client;
         this.srv = srv;
-        usr = new User(getId());
 
     }
 
@@ -44,29 +47,58 @@ public class Worker extends Thread implements Runnable {
 
     public void run() {
 
-        setUpStreams();
+        if(stage == stages.LOGGIN_IN) {
 
-        while(true) {
-
-            inBytes = new byte[4096];
             try {
 
-                if(in.read(inBytes) != -1) {
+                ObjectInputStream ObjIn = new ObjectInputStream(client.getInputStream());
+                Object obj = ObjIn.readObject();
+                ObjIn.close();
+                database = new dbHandler();
+                int statusCode = database.insert(obj);
 
-                    srv.incMessage(new String(inBytes, "UTF-8"));
-
-                }else{
-
-                    srv.appendToLog("Client disconnected, thread " + getId() + " is terminating..");
-                    srv.decThreadCounter();
-                    break;
-
-                }
+                ObjectOutputStream ObjOut = new ObjectOutputStream(client.getOutputStream());
+                ObjOut.writeInt(statusCode);
+                out.flush();
+                out.close();
 
             }catch(IOException e) {
 
                 System.err.print(e);
 
+            }catch(ClassNotFoundException e) {
+
+                System.err.print(e);
+
+            }
+        }
+
+        if(stage == stages.LOGGED_IN) {
+
+            setUpStreams();
+
+            while (true) {
+
+                inBytes = new byte[4096];
+                try {
+
+                    if (in.read(inBytes) != -1) {
+
+                        srv.incMessage(new String(inBytes, "UTF-8"));
+
+                    } else {
+
+                        srv.appendToLog("Client disconnected, thread " + getId() + " is terminating..");
+                        srv.decThreadCounter();
+                        break;
+
+                    }
+
+                } catch (IOException e) {
+
+                    System.err.print(e);
+
+                }
             }
         }
     }
@@ -77,10 +109,7 @@ public class Worker extends Thread implements Runnable {
 
             try {
 
-                out.write(
-                        arrayConcat(usr.toString().getBytes(),
-                                ((String) obj).getBytes())
-                );
+                out.write(((String) obj).getBytes());
                 out.flush();
 
             }catch(IOException e) {

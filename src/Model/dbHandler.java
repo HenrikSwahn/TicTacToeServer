@@ -1,5 +1,6 @@
 package Model;
 import java.sql.*;
+import java.util.Objects;
 
 /**
  * Created by henrik on 17/04/15.
@@ -10,37 +11,14 @@ public class dbHandler {
     private static final String DB_URL = "jdbc:mysql://localhost/TicTacToe";
     private static final String USER = "root";
     private static final String PASS = "";
-    private static dbHandler handler;
+    private Connection conn;
 
-    private dbHandler() {}
-
-    public static dbHandler getInstance() {
-
-        if(handler == null) {
-
-            handler = new dbHandler();
-
-        }
-        return handler;
-    }
-
-    public int connect() {
-
-        Connection conn;
-        Statement stmt;
+    public dbHandler() {
 
         try {
 
             Class.forName(JDBC_DRIVER);
-
-            System.out.println("Connecting to database");
-            conn = DriverManager.getConnection(DB_URL,USER,PASS);
-
-            System.out.println("Making a statement");
-            stmt = conn.createStatement();
-            String sql = "INSERT INTO User(name, surname, email, pass, username) " +
-                    "VALUES ('Henrik', 'Swahn', 'h_swahn@hotmail.com', '12345', 'Swahn')";
-            stmt.execute(sql);
+            conn = DriverManager.getConnection(DB_URL, USER, PASS);
 
         }catch(ClassNotFoundException e) {
 
@@ -51,6 +29,60 @@ public class dbHandler {
             System.err.print(e);
 
         }
-        return 0;
+    }
+
+    private int insertUser(User usr) {
+
+        String name = usr.getName();
+        String surname = usr.getSurname();
+        String email = usr.getEmail();
+        String pass = usr.getPass();
+        String username = usr.getUsername();
+
+        try {
+
+
+            String sql = "SELECT * FROM User WHERE username=? OR email=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, username);
+            ps.setString(2, email);
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()) {
+
+                if(username.equals(rs.getString("username"))) {
+                    return 2;
+                }else if(email.equals(rs.getString("email"))) {
+                    return 1;
+                }
+            }
+
+            sql = "INSERT INTO USER(name, surname, email, pass, username) VALUES(?,?,?,?,?)";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, name);
+            ps.setString(2, surname);
+            ps.setString(3, email);
+            ps.setString(4, pass);
+            ps.setString(5, username);
+
+            if(ps.execute())
+                return 0;
+
+
+
+        }catch(SQLException e) {
+
+            System.err.print(e);
+
+        }
+        return 3;
+    }
+
+    public int insert(Object obj) {
+
+        if(obj instanceof User)
+            return insertUser((User)obj);
+
+        return -1;
     }
 }
