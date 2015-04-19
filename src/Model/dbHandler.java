@@ -85,4 +85,45 @@ public class dbHandler {
 
         return -1;
     }
+
+    public User getUsr(User usr) {
+
+        try {
+
+            String sql = "SELECT * FROM User WHERE username=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, usr.getUsername());
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+
+            return new User(
+                    rs.getString("name"),
+                    rs.getString("surname"),
+                    rs.getString("email"),
+                    rs.getString("pass"),
+                    rs.getString("username")
+            );
+
+        }catch(SQLException e) {
+
+            System.err.print(e);
+
+        }
+
+        return null;
+
+    }
+
+    public void close() {
+
+        try {
+
+            conn.close();
+
+        }catch(SQLException e) {
+
+            System.err.print(e);
+
+        }
+    }
 }

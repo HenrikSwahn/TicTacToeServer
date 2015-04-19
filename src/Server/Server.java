@@ -1,6 +1,7 @@
 package Server;
 
 import GUI.Window;
+import Model.User;
 import Model.dbHandler;
 
 

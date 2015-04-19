@@ -23,6 +23,7 @@ public class Worker extends Thread implements Runnable {
     private byte[] inBytes;
     private stages stage = stages.LOGGIN_IN;
     private dbHandler database;
+    private User usr;
 
     public Worker(Socket client, Server srv) {
 
@@ -53,14 +54,23 @@ public class Worker extends Thread implements Runnable {
 
                 ObjectInputStream ObjIn = new ObjectInputStream(client.getInputStream());
                 Object obj = ObjIn.readObject();
-                ObjIn.close();
+                client.shutdownInput();
+
                 database = new dbHandler();
                 int statusCode = database.insert(obj);
 
                 ObjectOutputStream ObjOut = new ObjectOutputStream(client.getOutputStream());
                 ObjOut.writeInt(statusCode);
-                out.flush();
-                out.close();
+                ObjOut.flush();
+                client.shutdownOutput();
+
+                if(statusCode == 0) {
+
+                    usr = database.getUsr((User)obj);
+                    stage = stages.LOGGED_IN;
+
+                }
+                database.close();
 
             }catch(IOException e) {
 
@@ -109,6 +119,7 @@ public class Worker extends Thread implements Runnable {
 
             try {
 
+                System.out.println(usr.getUsername());
                 out.write(((String) obj).getBytes());
                 out.flush();
 
