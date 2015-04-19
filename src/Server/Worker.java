@@ -54,7 +54,6 @@ public class Worker extends Thread implements Runnable {
 
                 ObjectInputStream ObjIn = new ObjectInputStream(client.getInputStream());
                 Object obj = ObjIn.readObject();
-                client.shutdownInput();
 
                 database = new dbHandler();
                 int statusCode = database.insert(obj);
@@ -62,7 +61,6 @@ public class Worker extends Thread implements Runnable {
                 ObjectOutputStream ObjOut = new ObjectOutputStream(client.getOutputStream());
                 ObjOut.writeInt(statusCode);
                 ObjOut.flush();
-                client.shutdownOutput();
 
                 if(statusCode == 0) {
 

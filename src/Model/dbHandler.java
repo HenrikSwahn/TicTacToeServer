@@ -65,10 +65,8 @@ public class dbHandler {
             ps.setString(4, pass);
             ps.setString(5, username);
 
-            if(ps.execute())
-                return 0;
-
-
+            ps.execute();
+            return 0;
 
         }catch(SQLException e) {
 
