@@ -1,8 +1,8 @@
 package Server;
 
 
+import Model.LoginObject;
 import Model.User;
-import Model.dbHandler;
 
 import java.io.*;
 import java.net.Socket;
@@ -46,6 +46,72 @@ public class Worker extends Thread implements Runnable {
         }
     }
 
+    private byte[] arrayConcat(byte[] a, byte[] b) {
+
+        int aLength = a.length;
+        int bLength = b.length;
+        byte[] arrow = (" > ").getBytes();
+        int arrLength = arrow.length;
+        byte[] c = new byte[aLength+bLength+arrLength];
+
+        System.arraycopy(a,0,c,0,aLength);
+        System.arraycopy(arrow,0,c,aLength, arrLength);
+        System.arraycopy(b,0,c,(aLength + arrLength),bLength);
+
+        return c;
+
+    }
+
+    private void createUser(User usr) {
+
+        try {
+
+            database = new dbHandler();
+            int statusCode = database.insertUser(usr);
+            ObjectOutputStream ObjOut = new ObjectOutputStream(client.getOutputStream());
+
+            ObjOut.writeInt(statusCode);
+            ObjOut.flush();
+
+            if (statusCode == 0) {
+
+                this.usr = database.getUsr(usr);
+                stage = stages.LOGGED_IN;
+
+            }
+            database.close();
+
+        }catch(IOException e) {
+
+            System.err.print(e);
+
+        }
+    }
+
+    private void loginUser(LoginObject login) {
+
+        try {
+
+            database = new dbHandler();
+            int statusCode = database.login(login);
+            ObjectOutputStream ObjOut = new ObjectOutputStream(client.getOutputStream());
+
+            ObjOut.writeInt(statusCode);
+            ObjOut.flush();
+
+            if (statusCode == 0) {
+
+                this.usr = database.getUsr(login);
+                stage = stages.LOGGED_IN;
+            }
+
+        }catch(IOException e) {
+
+            System.err.print(e);
+
+        }
+    }
+
     public void run() {
 
         if(stage == stages.LOGGIN_IN) {
@@ -55,20 +121,15 @@ public class Worker extends Thread implements Runnable {
                 ObjectInputStream ObjIn = new ObjectInputStream(client.getInputStream());
                 Object obj = ObjIn.readObject();
 
-                database = new dbHandler();
-                int statusCode = database.insert(obj);
+                if(obj instanceof User) {
 
-                ObjectOutputStream ObjOut = new ObjectOutputStream(client.getOutputStream());
-                ObjOut.writeInt(statusCode);
-                ObjOut.flush();
+                    createUser((User)obj);
 
-                if(statusCode == 0) {
+                }else if(obj instanceof LoginObject) {
 
-                    usr = database.getUsr((User)obj);
-                    stage = stages.LOGGED_IN;
+                    loginUser((LoginObject)obj);
 
                 }
-                database.close();
 
             }catch(IOException e) {
 
@@ -127,21 +188,5 @@ public class Worker extends Thread implements Runnable {
 
             }
         }
-    }
-
-    private byte[] arrayConcat(byte[] a, byte[] b) {
-
-        int aLength = a.length;
-        int bLength = b.length;
-        byte[] arrow = (" > ").getBytes();
-        int arrLength = arrow.length;
-        byte[] c = new byte[aLength+bLength+arrLength];
-
-        System.arraycopy(a,0,c,0,aLength);
-        System.arraycopy(arrow,0,c,aLength, arrLength);
-        System.arraycopy(b,0,c,(aLength + arrLength),bLength);
-
-        return c;
-
     }
 }

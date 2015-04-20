@@ -1,8 +1,6 @@
 package Server;
 
 import GUI.Window;
-import Model.User;
-import Model.dbHandler;
 
 
 import java.io.IOException;
@@ -127,11 +125,7 @@ public class Server implements Runnable {
     public synchronized void incMessage(Object obj) {
 
         win.appendToLog(obj);
-        for(Worker w:workers) {
-
-            w.send(obj);
-
-        }
+        workers.forEach((Worker w) -> w.send(obj));
 
     }
 
