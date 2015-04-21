@@ -73,13 +73,19 @@ public class Worker extends Thread implements Runnable {
             ObjOut.writeInt(statusCode);
             ObjOut.flush();
 
-            if (statusCode == 0) {
+            if(statusCode == 0) {
 
                 this.usr = database.getUsr(usr);
                 stage = stages.LOGGED_IN;
+                database.close();
+
+            }else{
+
+                database.close();
+                client.close();
+                srv.removeWorker(this);
 
             }
-            database.close();
 
         }catch(IOException e) {
 
@@ -99,10 +105,18 @@ public class Worker extends Thread implements Runnable {
             ObjOut.writeInt(statusCode);
             ObjOut.flush();
 
-            if (statusCode == 0) {
+            if(statusCode == 0) {
 
                 this.usr = database.getUsr(login);
                 stage = stages.LOGGED_IN;
+                database.close();
+
+            }else{
+
+                database.close();
+                client.close();
+                srv.removeWorker(this);
+
             }
 
         }catch(IOException e) {
@@ -151,19 +165,21 @@ public class Worker extends Thread implements Runnable {
                 inBytes = new byte[4096];
                 try {
 
-                    if (in.read(inBytes) != -1) {
+                    if(in.read(inBytes) != -1) {
 
                         srv.incMessage(new String(inBytes, "UTF-8"));
 
-                    } else {
+                    }else{
 
                         srv.appendToLog("Client disconnected, thread " + getId() + " is terminating..");
                         srv.decThreadCounter();
+                        client.close();
+                        srv.removeWorker(this);
                         break;
 
                     }
 
-                } catch (IOException e) {
+                }catch(IOException e) {
 
                     System.err.print(e);
 
@@ -176,7 +192,7 @@ public class Worker extends Thread implements Runnable {
 
         if(obj instanceof String) {
 
-            try {
+            try{
 
                 System.out.println(usr.getUsername());
                 out.write(((String) obj).getBytes());

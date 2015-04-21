@@ -88,21 +88,20 @@ public class dbHandler {
             ps.setString(1,login.getUsername());
             ResultSet rs = ps.executeQuery();
 
-            /*if(!rs.next()) {
+            System.out.println(login.getUsername());
+            if(!rs.isBeforeFirst()) {
 
-                System.out.println("YOLO");
                 return 2;
 
-            }*/
+            }
 
-            //rs.next();
-            System.out.println(rs.getString("username"));
+            rs.next();
 
-            /*if(!rs.getString("pass").equals(login.getPass())) {
+            if(!rs.getString("pass").equals(login.getPass())) {
 
                 return 1;
 
-            }*/
+            }
         }catch(SQLException e) {
 
         }

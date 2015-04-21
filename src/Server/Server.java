@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
  */
 public class Server implements Runnable {
 
-    private final int nrThreads = 5;
+    private final int nrThreads = 2;
     private static Server srv = null;
     private ServerSocket server;
     private Socket client;
@@ -148,5 +148,10 @@ public class Server implements Runnable {
 
         return currentThreads;
 
+    }
+
+    public void removeWorker(Worker w) {
+
+        workers.remove(w);
     }
 }
