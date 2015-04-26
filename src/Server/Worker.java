@@ -1,6 +1,7 @@
 package Server;
 
 
+import Model.GameActionObject;
 import Model.LoginObject;
 import Model.User;
 
@@ -18,8 +19,12 @@ public class Worker extends Thread implements Runnable {
 
     private Socket client;
     private Server srv;
-    private OutputStream out;
-    private InputStream in;
+    //private OutputStream out;
+    //private InputStream in;
+
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
+
     private byte[] inBytes;
     private stages stage = stages.LOGGIN_IN;
     private dbHandler database;
@@ -36,8 +41,8 @@ public class Worker extends Thread implements Runnable {
 
         try {
 
-            out = client.getOutputStream();
-            in = client.getInputStream();
+            out = new ObjectOutputStream(client.getOutputStream());
+            in = new ObjectInputStream(client.getInputStream());
 
         }catch(IOException e) {
 
@@ -162,24 +167,42 @@ public class Worker extends Thread implements Runnable {
 
             while (true) {
 
-                inBytes = new byte[4096];
+                //inBytes = new byte[4096];
                 try {
 
-                    if(in.read(inBytes) != -1) {
+                    //if(in.read(inBytes) != -1) {
+                    Object obj = in.readObject();
+                    System.out.println("0");
+                    if(obj instanceof Integer) {
 
-                        srv.incMessage(new String(inBytes, "UTF-8"));
+                        /*if() {
+                            srv.incMessage(new String(inBytes, "UTF-8"));
 
-                    }else{
-
+                        }else{*/
+                        System.out.println("1");
                         srv.appendToLog("Client disconnected, thread " + getId() + " is terminating..");
                         srv.decThreadCounter();
                         client.close();
                         srv.removeWorker(this);
                         break;
 
+                        // }
+                    }else {
+
+                        System.out.println("2");
+                        if(obj instanceof GameActionObject) {
+
+                            System.out.println("3");
+                            srv.incMessage(((GameActionObject) obj).getId());
+
+                        }
                     }
 
                 }catch(IOException e) {
+
+                    System.err.print(e);
+
+                }catch(ClassNotFoundException e) {
 
                     System.err.print(e);
 
