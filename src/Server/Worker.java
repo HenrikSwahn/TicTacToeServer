@@ -21,14 +21,13 @@ public class Worker extends Thread implements Runnable {
     private Server srv;
     //private OutputStream out;
     //private InputStream in;
-
-    private ObjectOutputStream out;
-    private ObjectInputStream in;
-
-    private byte[] inBytes;
+    //private byte[] inBytes;
     private stages stage = stages.LOGGIN_IN;
     private dbHandler database;
     private User usr;
+
+    private ObjectInputStream objIn;
+    private ObjectOutputStream objOut;
 
     public Worker(Socket client, Server srv) {
 
@@ -41,8 +40,10 @@ public class Worker extends Thread implements Runnable {
 
         try {
 
-            out = new ObjectOutputStream(client.getOutputStream());
-            in = new ObjectInputStream(client.getInputStream());
+            //out = client.getOutputStream();
+            //in = client.getInputStream();
+            objIn = new ObjectInputStream(client.getInputStream());
+            objOut = new ObjectOutputStream(client.getOutputStream());
 
         }catch(IOException e) {
 
@@ -167,42 +168,28 @@ public class Worker extends Thread implements Runnable {
 
             while (true) {
 
-                //inBytes = new byte[4096];
                 try {
 
-                    //if(in.read(inBytes) != -1) {
-                    Object obj = in.readObject();
-                    System.out.println("0");
-                    if(obj instanceof Integer) {
+                    Object obj = objIn.readObject();
+                    srv.incMessage(obj);
 
-                        /*if() {
-                            srv.incMessage(new String(inBytes, "UTF-8"));
+                }catch(IOException e) {
 
-                        }else{*/
-                        System.out.println("1");
+                    try {
+
                         srv.appendToLog("Client disconnected, thread " + getId() + " is terminating..");
                         srv.decThreadCounter();
                         client.close();
                         srv.removeWorker(this);
                         break;
 
-                        // }
-                    }else {
+                    }catch(IOException ex) {
 
-                        System.out.println("2");
-                        if(obj instanceof GameActionObject) {
+                        System.err.print(ex);
 
-                            System.out.println("3");
-                            srv.incMessage(((GameActionObject) obj).getId());
-
-                        }
                     }
 
-                }catch(IOException e) {
-
-                    System.err.print(e);
-
-                }catch(ClassNotFoundException e) {
+                }catch(ClassNotFoundException e){
 
                     System.err.print(e);
 
@@ -213,19 +200,15 @@ public class Worker extends Thread implements Runnable {
 
     public void send(Object obj) {
 
-        if(obj instanceof String) {
+        try {
 
-            try{
+            objOut.writeObject(obj);
+            objOut.flush();
 
-                System.out.println(usr.getUsername());
-                out.write(((String) obj).getBytes());
-                out.flush();
+        }catch(IOException e) {
 
-            }catch(IOException e) {
+            System.err.print(e);
 
-                System.err.print(e);
-
-            }
         }
     }
 }

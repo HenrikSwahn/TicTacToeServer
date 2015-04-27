@@ -1,5 +1,7 @@
 package GUI;
 
+import Model.GameActionObject;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -25,8 +27,11 @@ public class LogPanel extends JPanel {
             obj = ">" + obj + "\n";
             area.append((String)obj);
 
-        }
+        }else if(obj instanceof GameActionObject) {
 
+            area.append(String.valueOf(((GameActionObject)obj).getId()));
+
+        }
     }
 
     private void setUpLayout() {
