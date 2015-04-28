@@ -19,9 +19,6 @@ public class Worker extends Thread implements Runnable {
 
     private Socket client;
     private Server srv;
-    //private OutputStream out;
-    //private InputStream in;
-    //private byte[] inBytes;
     private stages stage = stages.LOGGIN_IN;
     private dbHandler database;
     private User usr;
@@ -40,8 +37,6 @@ public class Worker extends Thread implements Runnable {
 
         try {
 
-            //out = client.getOutputStream();
-            //in = client.getInputStream();
             objIn = new ObjectInputStream(client.getInputStream());
             objOut = new ObjectOutputStream(client.getOutputStream());
 
@@ -171,7 +166,7 @@ public class Worker extends Thread implements Runnable {
                 try {
 
                     Object obj = objIn.readObject();
-                    srv.incMessage(obj);
+                    srv.incMessage(usr, obj);
 
                 }catch(IOException e) {
 

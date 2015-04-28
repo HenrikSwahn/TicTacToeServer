@@ -1,6 +1,7 @@
 package GUI;
 
 import Model.GameActionObject;
+import Model.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,16 +21,17 @@ public class LogPanel extends JPanel {
 
     }
 
-    public void append(Object obj) {
+    public void append(User usr, Object obj) {
 
         if(obj instanceof String) {
 
-            obj = ">" + obj + "\n";
+            obj = usr.getName() + " > " + obj + "\n";
             area.append((String)obj);
 
         }else if(obj instanceof GameActionObject) {
 
-            area.append(String.valueOf(((GameActionObject)obj).getId()));
+            String str = usr.getName() + " > " + String.valueOf(((GameActionObject)obj).getId()) + "\n";
+            area.append(str);
 
         }
     }

@@ -1,5 +1,7 @@
 package GUI;
 
+import Model.User;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -21,9 +23,9 @@ public class Window extends JFrame {
 
     }
 
-    public void appendToLog(Object obj) {
+    public void appendToLog(User usr, Object obj) {
 
-        log.append(obj);
+        log.append(usr, obj);
 
     }
 

@@ -1,6 +1,7 @@
 package Server;
 
 import GUI.Window;
+import Model.User;
 
 
 import java.io.IOException;
@@ -26,6 +27,7 @@ public class Server implements Runnable {
     private ExecutorService executors = Executors.newFixedThreadPool(nrThreads);
     private List<Worker> workers;
     private int currentThreads;
+    private User srvUsr;
 
     private Server() {}
 
@@ -43,6 +45,7 @@ public class Server implements Runnable {
         try {
 
             currentThreads = 0;
+            srvUsr = new User("Server", null, null, null, null);
             workers = new ArrayList<Worker>(nrThreads);
             server = new ServerSocket(PORT);
 
@@ -79,7 +82,7 @@ public class Server implements Runnable {
 
             try{
 
-                win.appendToLog("Now listening on " + PORT);
+                win.appendToLog(srvUsr, "Now listening on " + PORT);
 
                 while(true) {
 
@@ -91,8 +94,8 @@ public class Server implements Runnable {
                         workers.add(w);
                         executors.execute(w);
                         incThreadCounter();
-                        win.appendToLog("A new WorkerThread has been started id: " + w.getId());
-                        win.appendToLog("Nr of active threads: " + getNrOfThreads());
+                        win.appendToLog(srvUsr, "A new WorkerThread has been started id: " + w.getId());
+                        win.appendToLog(srvUsr, "Nr of active threads: " + getNrOfThreads());
 
                     }else{
 
@@ -105,9 +108,7 @@ public class Server implements Runnable {
                         client.close();
 
                     }
-
                 }
-
             }catch(IOException e) {
 
                 System.err.print(e);
@@ -118,13 +119,13 @@ public class Server implements Runnable {
 
     public synchronized  void appendToLog(Object obj) {
 
-        win.appendToLog(obj);
+        win.appendToLog(srvUsr, obj);
 
     }
 
-    public synchronized void incMessage(Object obj) {
+    public synchronized void incMessage(User usr, Object obj) {
 
-        win.appendToLog(obj);
+        win.appendToLog(usr,obj);
         workers.forEach((Worker w) -> w.send(obj));
 
     }
@@ -139,8 +140,6 @@ public class Server implements Runnable {
 
         if(currentThreads > 0)
             currentThreads--;
-
-
 
     }
 
