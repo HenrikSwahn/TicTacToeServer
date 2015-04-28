@@ -1,6 +1,7 @@
 package Server;
 
 import GUI.Window;
+import Game.Game;
 import Model.User;
 
 
@@ -28,6 +29,7 @@ public class Server implements Runnable {
     private List<Worker> workers;
     private int currentThreads;
     private User srvUsr;
+    private Game game;
 
     private Server() {}
 
@@ -45,6 +47,7 @@ public class Server implements Runnable {
         try {
 
             currentThreads = 0;
+            game = new Game();
             srvUsr = new User("Server", null, null, null, null);
             workers = new ArrayList<Worker>(nrThreads);
             server = new ServerSocket(PORT);
