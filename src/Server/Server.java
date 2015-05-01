@@ -30,6 +30,7 @@ public class Server implements Runnable {
     private int currentThreads;
     private User srvUsr;
     private Game game;
+    private int nrClients;
 
     private Server() {}
 
@@ -47,6 +48,7 @@ public class Server implements Runnable {
         try {
 
             currentThreads = 0;
+            nrClients = 0;
             game = new Game();
             srvUsr = new User("Server", null, null, null, null);
             workers = new ArrayList<Worker>(nrThreads);
@@ -99,6 +101,13 @@ public class Server implements Runnable {
                         incThreadCounter();
                         win.appendToLog(srvUsr, "A new WorkerThread has been started id: " + w.getId());
                         win.appendToLog(srvUsr, "Nr of active threads: " + getNrOfThreads());
+                        nrClients++;
+
+                        if(nrClients == 2) {
+
+                            proposeNewGame();
+
+                        }
 
                     }else{
 
@@ -109,6 +118,7 @@ public class Server implements Runnable {
                         out.flush();
                         out.close();
                         client.close();
+                        nrClients--;
 
                     }
                 }
@@ -129,7 +139,13 @@ public class Server implements Runnable {
     public synchronized void incMessage(User usr, Object obj) {
 
         win.appendToLog(usr,obj);
-        workers.forEach((Worker w) -> w.send(obj));
+
+        if(obj instanceof String) {
+
+            String sendString = usr.getName() + " > " + obj;
+            workers.forEach((Worker w) -> w.send(sendString));
+
+        }
 
     }
 
@@ -155,5 +171,11 @@ public class Server implements Runnable {
     public void removeWorker(Worker w) {
 
         workers.remove(w);
+    }
+
+    private void proposeNewGame() {
+
+        workers.forEach((Worker w) -> w.proposeNewGame());
+
     }
 }

@@ -77,6 +77,8 @@ public class Worker extends Thread implements Runnable {
             if(statusCode == 0) {
 
                 this.usr = database.getUsr(usr);
+                ObjOut.writeObject(this.usr);
+                ObjOut.flush();
                 stage = stages.LOGGED_IN;
                 database.close();
 
@@ -109,6 +111,8 @@ public class Worker extends Thread implements Runnable {
             if(statusCode == 0) {
 
                 this.usr = database.getUsr(login);
+                ObjOut.writeObject(this.usr);
+                ObjOut.flush();
                 stage = stages.LOGGED_IN;
                 database.close();
 
@@ -205,5 +209,24 @@ public class Worker extends Thread implements Runnable {
             System.err.print(e);
 
         }
+    }
+
+    public boolean proposeNewGame() {
+
+        try {
+
+            GameActionObject gao = new GameActionObject(0, -1);
+            objOut.writeObject(gao);
+            objOut.flush();
+            System.out.println("YOYOYO");
+            return objIn.readBoolean();
+
+        }catch(IOException e) {
+
+            System.err.print(e);
+
+        }
+
+        return false;
     }
 }
