@@ -81,6 +81,7 @@ public class Worker extends Thread implements Runnable {
                 ObjOut.flush();
                 stage = stages.LOGGED_IN;
                 database.close();
+                setUpStreams();
                 srv.incThreadCounter();
 
             }else{
@@ -116,6 +117,7 @@ public class Worker extends Thread implements Runnable {
                 ObjOut.flush();
                 stage = stages.LOGGED_IN;
                 database.close();
+                setUpStreams();
                 srv.incThreadCounter();
 
             }else{
@@ -165,7 +167,7 @@ public class Worker extends Thread implements Runnable {
 
         if(stage == stages.LOGGED_IN) {
 
-            setUpStreams();
+            //setUpStreams();
 
             while (true) {
 
@@ -215,20 +217,20 @@ public class Worker extends Thread implements Runnable {
 
     public boolean proposeNewGame() {
 
-        /*try {
+        try {
 
             GameActionObject gao = new GameActionObject(0, -1);
             objOut.writeObject(gao);
             objOut.flush();
-            System.out.println("YOYOYO");
             return objIn.readBoolean();
 
         }catch(IOException e) {
 
             System.err.print(e);
 
-        }*/
-        System.out.println("sssawwwedswew");
+        }
+
+
 
         return false;
     }

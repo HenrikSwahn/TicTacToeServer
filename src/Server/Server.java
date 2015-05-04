@@ -3,6 +3,7 @@ package Server;
 import GUI.Window;
 import Game.Game;
 import Model.User;
+import com.sun.xml.internal.ws.api.pipe.FiberContextSwitchInterceptor;
 
 
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -30,7 +32,6 @@ public class Server implements Runnable {
     private int currentThreads;
     private User srvUsr;
     private Game game;
-    private int nrClients;
 
     private Server() {}
 
@@ -48,10 +49,9 @@ public class Server implements Runnable {
         try {
 
             currentThreads = 0;
-            nrClients = 0;
             game = new Game();
             srvUsr = new User("Server", null, null, null, null);
-            workers = new ArrayList<Worker>(nrThreads);
+            workers = new ArrayList<>(nrThreads);
             server = new ServerSocket(PORT);
 
         }catch(IOException e) {
@@ -174,7 +174,8 @@ public class Server implements Runnable {
 
     public void proposeNewGame() {
 
-        workers.forEach((Worker w) -> w.proposeNewGame());
+        //workers.forEach((Worker w) -> w.proposeNewGame());
+
 
     }
 }
