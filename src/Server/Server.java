@@ -98,16 +98,8 @@ public class Server implements Runnable {
                         Worker w = new Worker(client, this);
                         workers.add(w);
                         executors.execute(w);
-                        incThreadCounter();
                         win.appendToLog(srvUsr, "A new WorkerThread has been started id: " + w.getId());
                         win.appendToLog(srvUsr, "Nr of active threads: " + getNrOfThreads());
-                        nrClients++;
-
-                        if(nrClients == 2) {
-
-                            proposeNewGame();
-
-                        }
 
                     }else{
 
@@ -118,7 +110,6 @@ public class Server implements Runnable {
                         out.flush();
                         out.close();
                         client.close();
-                        nrClients--;
 
                     }
                 }
@@ -153,13 +144,20 @@ public class Server implements Runnable {
 
         currentThreads++;
 
+        if(currentThreads == 2) {
+
+            proposeNewGame();
+
+        }
     }
 
-    public synchronized void decThreadCounter() {
+    public void decThreadCounter() {
 
-        if(currentThreads > 0)
+        if(currentThreads > 0) {
+
             currentThreads--;
 
+        }
     }
 
     public synchronized int getNrOfThreads() {
@@ -171,9 +169,10 @@ public class Server implements Runnable {
     public void removeWorker(Worker w) {
 
         workers.remove(w);
+
     }
 
-    private void proposeNewGame() {
+    public void proposeNewGame() {
 
         workers.forEach((Worker w) -> w.proposeNewGame());
 

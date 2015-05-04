@@ -81,6 +81,7 @@ public class Worker extends Thread implements Runnable {
                 ObjOut.flush();
                 stage = stages.LOGGED_IN;
                 database.close();
+                srv.incThreadCounter();
 
             }else{
 
@@ -115,6 +116,7 @@ public class Worker extends Thread implements Runnable {
                 ObjOut.flush();
                 stage = stages.LOGGED_IN;
                 database.close();
+                srv.incThreadCounter();
 
             }else{
 
@@ -177,9 +179,9 @@ public class Worker extends Thread implements Runnable {
                     try {
 
                         srv.appendToLog("Client disconnected, thread " + getId() + " is terminating..");
-                        srv.decThreadCounter();
                         client.close();
                         srv.removeWorker(this);
+                        srv.decThreadCounter();
                         break;
 
                     }catch(IOException ex) {
@@ -213,7 +215,7 @@ public class Worker extends Thread implements Runnable {
 
     public boolean proposeNewGame() {
 
-        try {
+        /*try {
 
             GameActionObject gao = new GameActionObject(0, -1);
             objOut.writeObject(gao);
@@ -225,7 +227,8 @@ public class Worker extends Thread implements Runnable {
 
             System.err.print(e);
 
-        }
+        }*/
+        System.out.println("sssawwwedswew");
 
         return false;
     }
