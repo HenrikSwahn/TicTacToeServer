@@ -26,10 +26,15 @@ public class Worker extends Thread implements Runnable {
     private ObjectInputStream objIn;
     private ObjectOutputStream objOut;
 
+    private boolean isReady;
+    private String mark;
+
     public Worker(Socket client, Server srv) {
 
         this.client = client;
         this.srv = srv;
+        isReady = false;
+        mark = null;
 
     }
 
@@ -135,6 +140,46 @@ public class Worker extends Thread implements Runnable {
         }
     }
 
+    public void gaObjectInc(GameActionObject gao, User usr) {
+
+        switch (gao.getAction()) {
+            case 1:
+                isReady = true;
+                srv.incMessage(usr, "is ready");
+                srv.playerReady();
+                break;
+            case 2:
+                System.out.println("Player turned you down");
+            case 3:
+                System.out.println("Nice move");
+                break;
+        }
+    }
+
+    public boolean isReady() {
+
+        return isReady;
+
+    }
+
+    public void setReady(boolean isReady) {
+
+        this.isReady = isReady;
+
+    }
+
+    public String getMark() {
+
+        return mark;
+
+    }
+
+    public void setMark(String mark) {
+
+        this.mark = mark;
+
+    }
+
     public void run() {
 
         if(stage == stages.LOGGIN_IN) {
@@ -181,7 +226,7 @@ public class Worker extends Thread implements Runnable {
 
                     }else if(obj instanceof GameActionObject) {
 
-                        srv.GAObjectInc((GameActionObject)obj, usr);
+                        gaObjectInc((GameActionObject) obj, usr);
 
                     }
 

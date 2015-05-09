@@ -33,7 +33,7 @@ public class Server implements Runnable {
     private int currentThreads;
     private User srvUsr;
     private Game game;
-    private char[] MARKS = {'X','O'};
+    private String[] MARKS = {"X","O"};
 
     private Server() {}
 
@@ -180,17 +180,30 @@ public class Server implements Runnable {
         }
     }
 
-    public void GAObjectInc(GameActionObject gao, User usr) {
+    public void playerReady() {
 
-        switch (gao.getAction()) {
-            case 1:
-                incMessage(usr, "is ready");
-                break;
-            case 2:
-                System.out.println("Player turned you down");
-            case 3:
-                System.out.println("Nice move");
+        int counter = 0;
+
+        for(Worker w: workers) {
+
+            counter++;
+            if(!w.isReady())
                 break;
         }
+
+        if(counter == workers.size()) {
+
+            appendToLog("Start a new game BOYS!");
+
+        }
+    }
+
+    public void startNewGame() {
+
+        for(int i = 0; i < workers.size(); i++) {
+
+            workers.get(i).setMark(MARKS[i]);
+        }
+        game = new Game();
     }
 }
