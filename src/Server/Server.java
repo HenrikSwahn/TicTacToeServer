@@ -138,7 +138,6 @@ public class Server implements Runnable {
             workers.forEach((Worker w) -> w.send(sendString));
 
         }
-
     }
 
     public void incThreadCounter() {
