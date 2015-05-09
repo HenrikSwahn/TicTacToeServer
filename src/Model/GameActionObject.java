@@ -4,6 +4,12 @@ import java.io.Serializable;
 
 public class GameActionObject implements Serializable {
 
+    /*Action:
+    0 = ask to start new game
+    1 = yes
+    2 = no
+    3 = click, also uses id
+     */
     private int action;
     private int id;
 

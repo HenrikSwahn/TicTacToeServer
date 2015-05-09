@@ -33,6 +33,7 @@ public class Server implements Runnable {
     private int currentThreads;
     private User srvUsr;
     private Game game;
+    private char[] MARKS = {'X','O'};
 
     private Server() {}
 
@@ -184,6 +185,11 @@ public class Server implements Runnable {
         switch (gao.getAction()) {
             case 1:
                 incMessage(usr, "is ready");
+                break;
+            case 2:
+                System.out.println("Player turned you down");
+            case 3:
+                System.out.println("Nice move");
                 break;
         }
     }
