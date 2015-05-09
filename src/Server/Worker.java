@@ -174,7 +174,17 @@ public class Worker extends Thread implements Runnable {
                 try {
 
                     Object obj = objIn.readObject();
-                    srv.incMessage(usr, obj);
+
+                    if(obj instanceof String) {
+
+                        srv.incMessage(usr, obj);
+
+                    }else if(obj instanceof GameActionObject) {
+
+                        srv.GAObjectInc((GameActionObject)obj, usr);
+
+                    }
+
 
                 }catch(IOException e) {
 
@@ -215,23 +225,18 @@ public class Worker extends Thread implements Runnable {
         }
     }
 
-    public boolean proposeNewGame() {
+    public void proposeNewGame() {
 
         try {
 
             GameActionObject gao = new GameActionObject(0, -1);
             objOut.writeObject(gao);
             objOut.flush();
-            return objIn.readBoolean();
 
         }catch(IOException e) {
 
             System.err.print(e);
 
         }
-
-
-
-        return false;
     }
 }

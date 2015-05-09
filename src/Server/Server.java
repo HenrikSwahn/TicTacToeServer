@@ -2,6 +2,7 @@ package Server;
 
 import GUI.Window;
 import Game.Game;
+import Model.GameActionObject;
 import Model.User;
 import com.sun.xml.internal.ws.api.pipe.FiberContextSwitchInterceptor;
 
@@ -174,8 +175,17 @@ public class Server implements Runnable {
 
     public void proposeNewGame() {
 
-        //workers.forEach((Worker w) -> w.proposeNewGame());
+        for(Worker w: workers) {
+            w.proposeNewGame();
+        }
+    }
 
+    public void GAObjectInc(GameActionObject gao, User usr) {
 
+        switch (gao.getAction()) {
+            case 1:
+                incMessage(usr, "is ready");
+                break;
+        }
     }
 }
