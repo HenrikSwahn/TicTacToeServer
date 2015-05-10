@@ -11,7 +11,7 @@ import java.util.Objects;
 public class dbHandler {
 
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    private static final String DB_URL = "jdbc:mysql://localhost/TicTacToe";
+    private static final String DB_URL = "jdbc:mysql://localhost/";//TicTacToe
     private static final String USER = "root";
     private static final String PASS = "";
     private Connection conn;
@@ -22,6 +22,7 @@ public class dbHandler {
 
             Class.forName(JDBC_DRIVER);
             conn = DriverManager.getConnection(DB_URL, USER, PASS);
+            createDatabase();
 
         }catch(ClassNotFoundException e) {
 
@@ -30,6 +31,26 @@ public class dbHandler {
         }catch(SQLException e) {
 
             System.err.print(e);
+
+        }
+    }
+
+    private void createDatabase() {
+
+        try {
+
+            Statement stmt = conn.createStatement();
+            String sql = "CREATE DATABASE IF NOT EXISTS TicTacToe";
+            stmt.executeUpdate(sql);
+            stmt.close();
+
+            conn.setCatalog("TicTacToe");
+            stmt = conn.createStatement();
+            
+
+        }catch(SQLException e) {
+
+            e.printStackTrace();
 
         }
     }
