@@ -9,6 +9,8 @@ public class GameActionObject implements Serializable {
     1 = yes
     2 = no
     3 = click, also uses id
+    4 = player is X
+    5 = player is O
      */
     private int action;
     private int id;

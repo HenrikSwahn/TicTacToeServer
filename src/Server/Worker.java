@@ -149,9 +149,8 @@ public class Worker extends Thread implements Runnable {
                 srv.playerReady();
                 break;
             case 2:
-                System.out.println("Player turned you down");
-            case 3:
-                System.out.println("Nice move");
+                srv.appendToLog("Player turned you down");
+            case 3://Click on square action
                 break;
         }
     }
@@ -178,6 +177,15 @@ public class Worker extends Thread implements Runnable {
 
         this.mark = mark;
 
+        if(mark.equals("X")) {
+
+            send(new GameActionObject(4,-1));
+
+        }else {
+
+            send(new GameActionObject(5, -1));
+
+        }
     }
 
     public void run() {

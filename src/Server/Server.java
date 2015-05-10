@@ -194,6 +194,7 @@ public class Server implements Runnable {
         if(counter == workers.size()) {
 
             appendToLog("Start a new game BOYS!");
+            startNewGame();
 
         }
     }
