@@ -41,7 +41,10 @@ public class Server implements Runnable {
 
         if(srv == null)
             srv = new Server();
+
         dbHandler db = new dbHandler();
+        db.createDatabase();
+        db.close();
 
         return srv;
 

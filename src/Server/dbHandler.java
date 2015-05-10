@@ -11,9 +11,10 @@ import java.util.Objects;
 public class dbHandler {
 
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    private static final String DB_URL = "jdbc:mysql://localhost/";//TicTacToe
+    private static final String DB_URL = "jdbc:mysql://localhost/";
     private static final String USER = "root";
     private static final String PASS = "";
+    private static final String DB_NAME = "TicTacToe";
     private Connection conn;
 
     public dbHandler() {
@@ -35,18 +36,54 @@ public class dbHandler {
         }
     }
 
-    private void createDatabase() {
+    private void createTable() {
 
         try {
 
             Statement stmt = conn.createStatement();
-            String sql = "CREATE DATABASE IF NOT EXISTS TicTacToe";
+            String sql = "CREATE TABLE IF NOT EXISTS User(" +
+                    "name VARCHAR(40), " +
+                    "surname VARCHAR(40)," +
+                    "email VARCHAR(40)," +
+                    "pass VARCHAR(40)," +
+                    "username VARCHAR(40))";
             stmt.executeUpdate(sql);
             stmt.close();
 
-            conn.setCatalog("TicTacToe");
-            stmt = conn.createStatement();
-            
+        }catch(SQLException e) {
+
+            e.printStackTrace();
+
+        }
+    }
+
+    private void changeCatalog() {
+
+        try {
+
+            if(!conn.getCatalog().equals(DB_NAME)) {
+
+                conn.setCatalog(DB_NAME);
+
+            }
+        }catch(SQLException e) {
+
+            e.printStackTrace();
+
+        }
+    }
+
+    public void createDatabase() {
+
+        try {
+
+            Statement stmt = conn.createStatement();
+            String sql = "CREATE DATABASE IF NOT EXISTS " + DB_NAME;
+            stmt.executeUpdate(sql);
+            stmt.close();
+
+            changeCatalog();
+            createTable();
 
         }catch(SQLException e) {
 
@@ -65,6 +102,7 @@ public class dbHandler {
 
         try {
 
+            changeCatalog();
 
             String sql = "SELECT * FROM User WHERE username=? OR email=?";
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -104,6 +142,8 @@ public class dbHandler {
 
         try {
 
+            changeCatalog();
+
             String sql = "SELECT * FROM User WHERE username=?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1,login.getUsername());
@@ -132,6 +172,8 @@ public class dbHandler {
     public User getUsr(Object obj) {
 
         try {
+
+            changeCatalog();
 
             String sql = "SELECT * FROM User WHERE username=?";
             PreparedStatement ps = conn.prepareStatement(sql);
