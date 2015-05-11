@@ -150,7 +150,19 @@ public class Worker extends Thread implements Runnable {
                 break;
             case 2:
                 srv.appendToLog("Player turned you down");
-            case 3://Click on square action
+            case 3:
+
+                if(srv.setMark(gao, mark)) {
+
+                    //Valid move
+                    send(new GameActionObject(6, gao.getVal()));
+
+                }else {
+
+                    //Invalid move
+                    send(new GameActionObject(7, gao.getVal()));
+
+                }
                 break;
         }
     }

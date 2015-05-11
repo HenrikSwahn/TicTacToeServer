@@ -12,4 +12,10 @@ public class Game {
         gLogic = new GameLogic();
 
     }
+
+    public boolean setMark(int pos, String mark) {
+
+        return gLogic.setMark(pos,mark);
+
+    }
 }

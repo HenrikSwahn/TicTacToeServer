@@ -211,4 +211,10 @@ public class Server implements Runnable {
         }
         game = new Game();
     }
+
+    public boolean setMark(GameActionObject gao, String mark) {
+
+        return game.setMark(gao.getVal(), mark);
+
+    }
 }

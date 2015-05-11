@@ -8,18 +8,31 @@ import java.util.stream.IntStream;
  */
 public class GameLogic {
 
-    private int board[][];
+    private String board[];
 
     public GameLogic() {
 
-        board = new int[3][3];
+        board = new String[9];
         IntStream.range(0,3)
-            .forEach(i -> IntStream.range(0,3)
-                .forEach(j -> {
-                    board[i][j] = 0;
-                })
-            );
+            .forEach(i -> {
+                board[i] = "-";
+            });
     }
 
+    private boolean checkIfValid(int pos) {
 
+        return board[pos].equals("-");
+
+    }
+
+    public boolean setMark(int pos, String mark) {
+
+        if(checkIfValid(pos)) {
+
+            board[pos] = mark;
+            return true;
+
+        }
+        return false;
+    }
 }

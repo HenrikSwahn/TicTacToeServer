@@ -30,7 +30,7 @@ public class LogPanel extends JPanel {
 
         }else if(obj instanceof GameActionObject) {
 
-            String str = usr.getName() + " > " + String.valueOf(((GameActionObject)obj).getId()) + "\n";
+            String str = usr.getName() + " > " + String.valueOf(((GameActionObject)obj).getVal()) + "\n";
             area.append(str);
 
         }
