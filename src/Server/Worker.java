@@ -155,10 +155,12 @@ public class Worker extends Thread implements Runnable {
                 if(srv.setMark(gao, mark)) {
 
                     //Valid move
-                    //send(new GameActionObject(6, gao.getVal()));
                     GameActionObject g = new GameActionObject(6, gao.getVal());
                     g.setMark(mark);
                     srv.updatePlayers(g);
+
+                    //Lock player
+                    send(new GameActionObject(9, -1));
 
                 }else {
 

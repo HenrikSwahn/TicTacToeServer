@@ -14,6 +14,8 @@ public class GameActionObject implements Serializable {
     6 = valid move, also uses val, also uses mark
     7 = invalid move, also uses val
     8 = Starting the new game
+    9 = lock
+    10 = unlock
      */
     private int action;
     private int val;

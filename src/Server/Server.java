@@ -218,6 +218,8 @@ public class Server implements Runnable {
             w.send(new GameActionObject(8, -1));
         });
         game = new Game();
+        workers.get(workers.size()-2).send(new GameActionObject(10, -1)); //Unlock one player at first
+        workers.get(workers.size()-1).send(new GameActionObject(9, -1)); //Lock one player at first
     }
 
     public boolean setMark(GameActionObject gao, String mark) {
@@ -228,7 +230,15 @@ public class Server implements Runnable {
 
     public void updatePlayers(GameActionObject gao) {
 
-        workers.forEach((Worker w) -> w.send(gao));
+        workers.forEach((Worker w) -> {
+            w.send(gao);
+
+            if(!w.getMark().equals(gao.getMark())) {
+                w.send(new GameActionObject(10, -1));
+                System.out.println("Yo");
+                //Unlock player
+            }
+        });
 
     }
 }
