@@ -13,7 +13,7 @@ public class GameLogic {
     public GameLogic() {
 
         board = new String[9];
-        IntStream.range(0,3)
+        IntStream.range(0,9)
             .forEach(i -> {
                 board[i] = "-";
             });

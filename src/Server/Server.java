@@ -217,4 +217,10 @@ public class Server implements Runnable {
         return game.setMark(gao.getVal(), mark);
 
     }
+
+    public void updatePlayers(GameActionObject gao) {
+
+        workers.forEach((Worker w) -> w.send(gao));
+
+    }
 }
