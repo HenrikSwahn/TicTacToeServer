@@ -34,6 +34,7 @@ public class Server implements Runnable {
     private User srvUsr;
     private Game game;
     private String[] MARKS = {"X","O"};
+    private int mCounter;
 
     private Server() {}
 
@@ -55,6 +56,7 @@ public class Server implements Runnable {
         try {
 
             currentThreads = 0;
+            mCounter = 0;
             game = new Game();
             srvUsr = new User("Server", null, null, null, null);
             workers = new ArrayList<>(nrThreads);
@@ -70,6 +72,12 @@ public class Server implements Runnable {
     private boolean checkAmountOfThreads() {
 
         return currentThreads < nrThreads;
+
+    }
+
+    private String setMark() {
+
+        return MARKS[mCounter++];
 
     }
 
@@ -205,10 +213,10 @@ public class Server implements Runnable {
 
     public void startNewGame() {
 
-        for(int i = 0; i < workers.size(); i++) {
-
-            workers.get(i).setMark(MARKS[i]);
-        }
+        workers.forEach((Worker w) -> {
+            w.setMark(setMark());
+            w.send(new GameActionObject(8, -1));
+        });
         game = new Game();
     }
 
