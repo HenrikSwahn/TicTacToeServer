@@ -233,12 +233,17 @@ public class Server implements Runnable {
         workers.forEach((Worker w) -> {
             w.send(gao);
 
-            if(!w.getMark().equals(gao.getMark())) {
+            if(!w.getMark().equals(gao.getMark()) && gao.getAction() != 11) {
                 w.send(new GameActionObject(10, -1));
                 System.out.println("Yo");
                 //Unlock player
             }
         });
+    }
+
+    public boolean checkIfGameOver(String mark) {
+
+        return game.checkIfGameOver(mark);
 
     }
 }

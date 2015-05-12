@@ -25,6 +25,14 @@ public class GameLogic {
 
     }
 
+    private boolean checkRow(int f, int s, int t, String m) {
+
+        return board[f] == m
+                && board[s] == m
+                && board[t] == m;
+
+    }
+
     public boolean setMark(int pos, String mark) {
 
         if(checkIfValid(pos)) {
@@ -35,4 +43,35 @@ public class GameLogic {
         }
         return false;
     }
+
+    public boolean isGameOver(String mark) {
+
+        if(checkRow(0,1,2,mark))
+            return true;
+
+        if(checkRow(3,4,5,mark))
+            return true;
+
+        if(checkRow(6,7,8,mark))
+            return true;
+
+        if(checkRow(0,3,6,mark))
+            return true;
+
+        if(checkRow(1,4,7,mark))
+            return true;
+
+        if(checkRow(2,5,8,mark))
+            return true;
+
+        if(checkRow(0,4,8,mark))
+            return true;
+
+        if(checkRow(2,4,6,mark))
+            return true;
+
+        return false;
+    }
+
+
 }

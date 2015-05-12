@@ -18,4 +18,10 @@ public class Game {
         return gLogic.setMark(pos,mark);
 
     }
+
+    public boolean checkIfGameOver(String mark) {
+
+        return gLogic.isGameOver(mark);
+
+    }
 }

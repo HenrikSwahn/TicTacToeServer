@@ -159,8 +159,13 @@ public class Worker extends Thread implements Runnable {
                     g.setMark(mark);
                     srv.updatePlayers(g);
 
-                    //Lock player
-                    send(new GameActionObject(9, -1));
+                    //Check if game over
+                    if(srv.checkIfGameOver(mark)) {
+                        g = new GameActionObject(11, -1);
+                        g.setMark(mark);
+                        srv.updatePlayers(g);
+                    }else //Lock player
+                        send(new GameActionObject(9, -1));
 
                 }else {
 
