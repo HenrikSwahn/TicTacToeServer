@@ -233,9 +233,8 @@ public class Server implements Runnable {
         workers.forEach((Worker w) -> {
             w.send(gao);
 
-            if(!w.getMark().equals(gao.getMark()) && gao.getAction() != 11) {
+            if(!w.getMark().equals(gao.getMark()) && gao.getAction() == 6) {
                 w.send(new GameActionObject(10, -1));
-                System.out.println("Yo");
                 //Unlock player
             }
         });
@@ -245,5 +244,16 @@ public class Server implements Runnable {
 
         return game.checkIfGameOver(mark);
 
+    }
+
+    public int getScore(String mark) {
+
+        switch (mark) {
+            case "X":
+                return game.getxScore();
+            case "O":
+                return game.getoScore();
+        }
+        return -1;
     }
 }

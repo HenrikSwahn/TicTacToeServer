@@ -140,6 +140,22 @@ public class Worker extends Thread implements Runnable {
         }
     }
 
+    private void gameEnded() {
+
+        GameActionObject g = new GameActionObject(11, -1);
+        g.setMark(mark);
+        srv.updatePlayers(g);
+
+        g = new GameActionObject(12, srv.getScore("X"));
+        g.setMark("X");
+        srv.updatePlayers(g);
+
+        g = new GameActionObject(12, srv.getScore("O"));
+        g.setMark("O");
+        srv.updatePlayers(g);
+
+    }
+
     public void gaObjectInc(GameActionObject gao, User usr) {
 
         switch (gao.getAction()) {
@@ -161,9 +177,7 @@ public class Worker extends Thread implements Runnable {
 
                     //Check if game over
                     if(srv.checkIfGameOver(mark)) {
-                        g = new GameActionObject(11, -1);
-                        g.setMark(mark);
-                        srv.updatePlayers(g);
+                        gameEnded();
                     }else //Lock player
                         send(new GameActionObject(9, -1));
 

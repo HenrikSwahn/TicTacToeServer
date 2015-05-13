@@ -6,10 +6,14 @@ package Game;
 public class Game {
 
     private GameLogic gLogic;
+    private int xScore;
+    private int oScore;
 
     public Game() {
 
         gLogic = new GameLogic();
+        xScore = 0;
+        oScore = 0;
 
     }
 
@@ -21,7 +25,22 @@ public class Game {
 
     public boolean checkIfGameOver(String mark) {
 
-        return gLogic.isGameOver(mark);
+        boolean status = gLogic.isGameOver(mark);
 
+        if(status && mark.equals("X"))
+            xScore++;
+        else if(status && mark.equals("O"))
+            oScore++;
+
+        return status;
+
+    }
+
+    public int getxScore() {
+        return xScore;
+    }
+
+    public int getoScore() {
+        return oScore;
     }
 }
